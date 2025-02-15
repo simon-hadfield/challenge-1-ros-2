@@ -1,0 +1,33 @@
+<launch>
+	<arg name="route"       default="0"/>
+	<arg name="group"       default="0"/>
+	<arg name="mode"       default="MODE_NOT_SPECIFIED"/> <!-- real sim bag -->
+	<arg name="bag_mode"       default="MODE_NOT_SPECIFIED"/> <!-- real sim bag -->
+	<param name="/use_sim_time" value="true"/>
+	
+	
+	<!-- ************** INCLUDE THE GROUPS LAUNCH FILE ********* -->
+	<include file="$(env HOME)/group$(arg group)_KF.launch"/>
+
+	<!--  ***************** Robot description ***************** -->
+	  <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
+	    <arg name="model" value="burger" />
+	  </include>
+
+	<!--  ***************** Gazebo ***************** -->
+	<include file="$(find turtlebot3_gazebo)/launch/turtlebot3_house.launch">   <!-- turtlebot3_world        turtlebot3_empty_world     turtlebot3_house    --> 
+		<arg name="model" value="burger" />
+	</include>
+
+
+	<!--  **************** Load the general script ****************  -->
+	<include file="$(find eee3043)/launch/challenge1_general.launch"> 
+		<arg name="route" value="$(arg route)" />
+		<arg name="mode" value="$(arg mode)" />
+	</include>
+	
+	<!--  **************** Map ****************  -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find eee3043)/maps/challenge1map_sim.yaml"/>
+	
+
+</launch>

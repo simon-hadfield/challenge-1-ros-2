@@ -1,0 +1,47 @@
+<launch>
+	<arg name="group"       default="0"/>
+	<arg name="route"       default="0"/>
+
+	<!-- ************** INCLUDE THE GROUPS LAUNCH FILE ********* -->
+	<include file="$(env HOME)/group$(arg group)_KF.launch"/>
+
+	<!--  ***************** bringup the real robot ***************** -->
+	<include file="$(find turtlebot3_bringup)/launch/turtlebot3_robot.launch"/>
+
+	<!--  ***************** Robot Model and publisher ***************** -->
+	<!-- include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
+		<arg name="model" value="burger" />
+	</include>
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+		<param name="publish_frequency" type="double" value="50.0" />
+		<param name="tf_prefix" value=""/>
+	</node-->
+
+	<!--  **************** Map ****************  -->
+	<!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find eee3043)/maps/challenge1map_real.yaml"/> -->
+	
+	<!--  **************** Visualisation ****************  -->
+	<!--node name="rviz" pkg="rviz" type="rviz" args="-d $(find eee3043)/rviz/turtlebot3_gazebo_model.rviz"/-->
+	
+	<!--  **************** Route ****************  -->
+	<node name="challenge1_route" pkg="eee3043" type="challenge1_route.py" args="$(arg route)" output="screen" required="true"/>
+	
+	
+	<!--  **************** Error calculation node ****************  -->
+	<node name="ATE" pkg="eee3043" type="absolute_trajectory_error.py" args="$(arg group) $(arg route)" output="screen"/>
+  
+	
+	<!--  **************** Fix and add noise to odom/imu, create fake gps ****************  -->
+	<node name="odom_corrector" pkg="eee3043" type="challenge1_correct_odom.py"/>
+	<node name="imu_corrector" pkg="eee3043" type="challenge1_correct_imu.py"/>
+	<node name="gps_corrector" pkg="eee3043" type="challenge1_correct_gps.py"/>
+	
+	<!-- ************** RECORD BAGS********* -->
+	<!-- <node name="rosbag" pkg="rosbag" type="record" args="record -O $(env HOME)/route$(arg route)_group$(arg group) -a" />  -->
+	
+
+</launch>
+
+	
+	
+	
