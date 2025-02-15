@@ -266,10 +266,10 @@ class GPStoUTM(object):
 if __name__ == '__main__':
     gps = GPStoUTM()
 
-    print gps.UTMLetterDesignator(63.506143)
-    print gps.UTM(63.506143, 9.200909)
-    print gps.LLtoUTM(63.506143, 9.200909)
-    print gps.UTMtoLL(7042000, 510000, 32, 'V')
+    print(gps.UTMLetterDesignator(63.506143))
+    print(gps.UTM(63.506143, 9.200909))
+    print(gps.LLtoUTM(63.506143, 9.200909))
+    print(gps.UTMtoLL(7042000, 510000, 32, 'V'))
 
 
 

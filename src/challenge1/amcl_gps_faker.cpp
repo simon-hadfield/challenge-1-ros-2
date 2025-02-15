@@ -63,11 +63,11 @@ void callback(const geometry_msgs::PoseWithCovarianceStamped& tf)
 
 
     //now use the input transform object to fill in the longitude and latitude - This is the dodgy hacky part
-    RobotLocalization::NavsatConversions::UTMtoLL(longi, lati, "U", gps_data.latitude, gps_data.longitude);
-    /*
-    gps_data.latitude = tf.transform.translation.x;
-    gps_data.longitude = tf.transform.translation.y;
-    gps_data.altitude = tf.transform.translation.z;*/
+    /*RobotLocalization::NavsatConversions::UTMtoLL(longi, lati, "U", gps_data.latitude, gps_data.longitude);
+    */
+    gps_data.latitude = lati;
+    gps_data.longitude = longi;
+    gps_data.altitude = tf.pose.pose.position.z;
 
     pub.publish(gps_data);
 }
