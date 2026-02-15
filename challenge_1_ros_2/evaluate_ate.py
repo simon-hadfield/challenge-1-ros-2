@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2013, Juergen Sturm, TUM
@@ -168,8 +168,7 @@ def plot_traj(ax,stamps,traj,style,color,label):
     if len(x)>0:
         ax.plot(x,y,style,color=color,label=label)
             
-
-if __name__=="__main__":
+def main():
     # parse command line
     parser = argparse.ArgumentParser(description='''
     This script computes the absolute trajectory error from the ground truth trajectory and the estimated trajectory. 
@@ -253,3 +252,6 @@ if __name__=="__main__":
         ax.set_ylabel('y [m]')
         plt.savefig(args.plot,dpi=90)
         
+
+if __name__=="__main__":
+    main()
