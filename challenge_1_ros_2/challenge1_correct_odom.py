@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 import random
+from tf_transformations import euler_from_quaternion, quaternion_from_euler
 
 
 class OdomCorrector(Node):
@@ -22,12 +23,22 @@ class OdomCorrector(Node):
         cov[21] = 1
         cov[28] = 1
         data.pose.covariance = tuple(cov)
+        # everything except orientation
         data.pose.pose.position.x += random.uniform(-0.01, 0.01)
         data.pose.pose.position.y += random.uniform(-0.001, 0.001)
-        data.pose.pose.orientation.z += random.uniform(-0.05, 0.05)
         data.twist.twist.linear.x += random.uniform(-0.01, 0.01)
         data.twist.twist.linear.y += random.uniform(-0.001, 0.001)
         data.twist.twist.angular.z += random.uniform(-0.05, 0.05)
+        # planar yaw noise
+        q = data.pose.pose.orientation
+        roll, pitch, yaw = euler_from_quaternion([q.x, q.y, q.z, q.w])
+        yaw += random.uniform(-0.05, 0.05)
+        qx, qy, qz, qw = quaternion_from_euler(roll, pitch, yaw)
+        data.pose.pose.orientation.x = qx
+        data.pose.pose.orientation.y = qy
+        data.pose.pose.orientation.z = qz
+        data.pose.pose.orientation.w = qw
+
         self.pub.publish(data)
 
 
