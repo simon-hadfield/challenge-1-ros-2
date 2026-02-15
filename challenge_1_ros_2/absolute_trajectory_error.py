@@ -112,7 +112,9 @@ def main(args=None):
         try:
             with open(fname+'log.txt', 'r') as log_file:
                 ate_result = log_file.read().strip()
+                print(f"********************")
                 print(f"**** ATE Result: {ate_result}")
+                print(f"********************")
         except Exception as e:
             print(f"Could not read ATE result: {e}")
 

@@ -17,14 +17,14 @@ class Challenge1Route(Node):
     def run_route(self):
         move = TwistStamped()
         counter = 1
-        speedup = 2.0
+        speedup = 1.0
         fwd = 0.1
         tcurve = 0.5  # tight
         wcurve = 0.3  # wide
         time.sleep(5)    # wait for gazebo etc to start
 
         while True:
-            print(counter)
+            #print(counter)
             move.header.stamp = self.get_clock().now().to_msg()
             
             # pirouette (just for testing)
