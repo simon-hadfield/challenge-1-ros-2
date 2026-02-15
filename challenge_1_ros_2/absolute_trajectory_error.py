@@ -107,6 +107,14 @@ def main(args=None):
         print(cmd)
         os.system(cmd)
         print("ATE done")
+        
+        # Read and print the ATE result
+        try:
+            with open(fname+'log.txt', 'r') as log_file:
+                ate_result = log_file.read().strip()
+                print(f"**** ATE Result: {ate_result}")
+        except Exception as e:
+            print(f"Could not read ATE result: {e}")
 
 
 if __name__ == '__main__':
