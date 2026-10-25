@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import hmac
+import hashlib
 import rclpy
 from rclpy.node import Node
 import sys
@@ -15,6 +17,8 @@ f_gt = []
 n_skip = 350
 num_skipped_est = 0
 num_skipped_gt = 0
+
+SKEY = b"Lu<ujx{U1l{U3:s}"
 
 
 class ATENode(Node):
@@ -69,6 +73,13 @@ class ATENode(Node):
         else:
             num_skipped_gt = num_skipped_gt+1
 
+def sign_score(group, route, score_text):
+    message = f"{group}:{route}:{score_text}".encode()
+    return hmac.new(
+        SKEY,
+        message,
+        hashlib.sha256
+    ).hexdigest()
 
 def main(args=None):
     global f_est, f_gt
@@ -108,15 +119,39 @@ def main(args=None):
         os.system(cmd)
         print("ATE done")
         
-        # Read and print the ATE result
+        # Read, sign and print the ATE result
         try:
-            with open(fname+'log.txt', 'r') as log_file:
+            log_path = fname + 'log.txt'
+
+            with open(log_path, 'r') as log_file:
                 ate_result = log_file.read().strip()
-                print(f"********************")
-                print(f"**** ATE Result: {ate_result}")
-                print(f"********************")
+
+            # Ensure the result is a valid numeric score
+            import math
+            score = float(ate_result)
+            if not math.isfinite(score) or score < 0:
+                raise ValueError("Invalid ATE score")
+
+            # Sign the exact score string
+            signature = sign_score(
+                group_no, route_no, ate_result
+            )
+
+            # Write signed result to a temporary file
+            temp_path = fname + 'log.tmp'
+            with open(temp_path, 'w') as f:
+                f.write(f"{ate_result}\n")
+                f.write(f"{signature}\n")
+
+            # Replace the original log atomically
+            os.replace(temp_path, log_path)
+
+            print("********************")
+            print(f"**** ATE Result: {ate_result}")
+            print("********************")
+
         except Exception as e:
-            print(f"Could not read ATE result: {e}")
+            print(f"Could not sign ATE result: {e}")
 
 
 if __name__ == '__main__':
